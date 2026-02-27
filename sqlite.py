@@ -11,7 +11,8 @@ def menue():
           "\n3-retourner un livre"
           "\n4-liste des livres empruntes"
           "\n5-lister les auteurs d'un livre"
-          "\n6-sortir le la base")
+          "\n6-liste des dates de retour de livres"
+          "\n7-sortir le la base")
 def ajouter_livre():
     try:
         titre = input("entrer le titre du livre: ")
@@ -47,6 +48,12 @@ def retourner_livre():
     curseur.execute("UPDATE emprunts SET date_retour=CURRENT_TIMESTAMP WHERE id_livre=? AND date_retour IS NULL", (id_li,))
     conn.commit()
     print("operation reussie")
+def date_retour():
+    curseur.execute("SELECT livre.titre,emprunts.date_retour FROM livre JOIN emprunts ON livre.id=emprunts.id_livre WHERE date_retour IS NOT NULL")
+    d=curseur.fetchall()
+    print(f"les livres et leur date de retour")
+    for i in d:
+        print(i)
 def livre_emprunte():
     curseur.execute("SELECT titre FROM livre JOIN emprunts ON livre.id=emprunts.id_livre WHERE date_retour IS NULL")
     d=curseur.fetchall()
@@ -66,21 +73,27 @@ def liste_auteurs():
         print("l'auteur ", auteur, "a les livres suivants: ")
         for livre in d:
             print(livre[0])
-while True:
-    menue()
-    choix=int(input("entrer votre choix : "))
-    match choix:
-        case 1:
-            ajouter_livre()
-        case 2:
-            emprunt_livre()
-        case 3:
-            retourner_livre()
-        case 4:
-            livre_emprunte()
-        case 5:
-            liste_auteurs()
-        case 6:
-            print("vous avez quittez la base")
-            break
-
+print("entrer 1 pour consulter la bibliotheque")
+choix=int(input("entrer votre choix: "))
+if choix==1:
+    while True:
+        menue()
+        choix=int(input("entrer votre choix : "))
+        match choix:
+            case 1:
+                ajouter_livre()
+            case 2:
+                emprunt_livre()
+            case 3:
+                retourner_livre()
+            case 4:
+                livre_emprunte()
+            case 5:
+                liste_auteurs()
+            case 6:
+                date_retour()
+            case 7:
+                print("vous avez quittez la base")
+                break
+else:
+    print("a la prochaine")
